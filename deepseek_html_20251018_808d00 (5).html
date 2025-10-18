@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Драгон Мани | Официальный сайт Dragon Money</title>
+    <meta name="description" content="Драгон Мани - официальный сайт Dragon Money. Игровые автоматы, слоты, live-казино. Регистрация с бонусами.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background: #0f121b; 
+            color: #fff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 15px; 
+        }
+        .btn { 
+            background: linear-gradient(135deg, #ffb400 0%, #ff9800 100%); 
+            color: #000; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            border: 1px solid #ffb400;
+        }
+        .btn:hover { 
+            background: linear-gradient(135deg, #ff9800 0%, #ff7700 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 180, 0, 0.3);
+        }
+        .btn-outline {
+            background: transparent;
+            color: #ffb400;
+            border: 2px solid #ffb400;
+        }
+        .btn-outline:hover {
+            background: #ffb400;
+            color: #000;
+        }
+        .header { 
+            background: rgba(16, 20, 31, 0.95); 
+            padding: 15px 0; 
+            border-bottom: 1px solid #1e2436;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .header-content { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
+        .logo { 
+            background: linear-gradient(135deg, #ffb400 0%, #ff9800 100%); 
+            color: #000; 
+            padding: 12px 24px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+            font-size: 20px;
+            text-decoration: none;
+            font-family: 'Arial Black', sans-serif;
+            letter-spacing: 1px;
+        }
+        .nav { display: flex; gap: 35px; align-items: center; }
+        .nav a { 
+            color: #b0b3c1; 
+            text-decoration: none; 
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            position: relative;
+        }
+        .nav a:hover { color: #ffb400; }
+        .nav a.active { color: #ffb400; }
+        .nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ffb400;
+            border-radius: 2px;
+        }
+        .hero { 
+            background: linear-gradient(135deg, #1a1f2e 0%, #0f121b 100%);
+            padding: 60px 40px;
+            border-radius: 20px;
+            margin: 40px 0;
+            text-align: center;
+            border: 1px solid #252b3d;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(255, 180, 0, 0.1), transparent 50%);
+        }
+        .hero h1 { 
+            font-size: 48px; 
+            margin-bottom: 20px; 
+            background: linear-gradient(135deg, #ffb400 0%, #ff6b00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .hero p { 
+            font-size: 18px; 
+            color: #b0b3c1;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .grid-2 { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 25px; 
+            margin: 40px 0;
+        }
+        .grid-3 { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+            margin: 30px 0;
+        }
+        .game-card { 
+            background: linear-gradient(135deg, #1a1f2e 0%, #151a28 100%);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #252b3d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffb400, #ff6b00);
+        }
+        .game-card:hover { 
+            border-color: #ffb400;
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .game-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .game-title { 
+            font-size: 22px; 
+            font-weight: 700; 
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        .online { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            color: #00d664;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background: #00d664;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .game-images { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px;
+        }
+        .game-preview { 
+            height: 90px; 
+            background: linear-gradient(135deg, #252b3d 0%, #1e2436 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #ffb400;
+            border: 1px solid #2d3447;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            text-align: center;
+            padding: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .game-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 180, 0, 0.1), transparent);
+        }
+        .game-preview:hover {
+            border-color: #ffb400;
+            transform: scale(1.05);
+        }
+        .section-title {
+            font-size: 32px;
+            text-align: center;
+            margin: 50px 0 30px;
+            color: #fff;
+            font-weight: 700;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ffb400, #ff6b00);
+            border-radius: 2px;
+        }
+        .seo-section { 
+            background: linear-gradient(135deg, #1a1f2e 0%, #151a28 100%); 
+            padding: 60px 0; 
+            margin-top: 60px;
+            border-top: 1px solid #252b3d;
+        }
+        .seo-section h1 { 
+            font-size: 32px; 
+            color: #ffb400; 
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        .seo-section h2 { 
+            font-size: 24px; 
+            color: #ffb400; 
+            margin: 30px 0 18px;
+            font-weight: 600;
+        }
+        .seo-section p { 
+            line-height: 1.7; 
+            margin-bottom: 18px;
+            color: #b0b3c1;
+            font-size: 16px;
+        }
+        .seo-section ul, .seo-section ol { 
+            margin: 18px 0 25px 30px; 
+            line-height: 1.7;
+            color: #b0b3c1;
+        }
+        .seo-section li { 
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .cta-large { 
+            background: linear-gradient(135deg, #ffb400 0%, #ff9800 100%);
+            color: #000; 
+            padding: 20px 45px; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            font-size: 18px; 
+            margin: 30px 0; 
+            display: inline-block;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .cta-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 180, 0, 0.4);
+        }
+        
+        /* Стили для изображений */
+        .game-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #2d3447;
+        }
+        .category-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #ffb400;
+        }
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ffb400 0%, #ff6b00 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 40px 0;
+        }
+        .benefit-card {
+            background: linear-gradient(135deg, #1a1f2e 0%, #151a28 100%);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #252b3d;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .benefit-card:hover {
+            border-color: #ffb400;
+            transform: translateY(-5px);
+        }
+        .benefit-card h3 {
+            color: #ffb400;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .benefit-card p {
+            color: #b0b3c1;
+            font-size: 14px;
+        }
+        
+        /* Стили для верхней части сайта */
+        .top-banner {
+            background: linear-gradient(135deg, #1a1f2e 0%, #0f121b 100%);
+            padding: 20px 0;
+            border-bottom: 1px solid #252b3d;
+        }
+        .banner-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .banner-text {
+            flex: 1;
+        }
+        .banner-text h2 {
+            font-size: 24px;
+            color: #ffb400;
+            margin-bottom: 10px;
+        }
+        .banner-text p {
+            color: #b0b3c1;
+            font-size: 14px;
+        }
+        .banner-images {
+            display: flex;
+            gap: 15px;
+        }
+        .banner-img {
+            width: 120px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #ffb400;
+            transition: all 0.3s ease;
+        }
+        .banner-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 180, 0, 0.3);
+        }
+        
+        .promo-section {
+            background: linear-gradient(135deg, #1a1f2e 0%, #151a28 100%);
+            padding: 30px;
+            border-radius: 16px;
+            margin: 30px 0;
+            border: 1px solid #252b3d;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        .promo-image {
+            flex: 1;
+            height: 200px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid #ffb400;
+        }
+        .promo-content {
+            flex: 2;
+        }
+        .promo-content h3 {
+            font-size: 24px;
+            color: #ffb400;
+            margin-bottom: 15px;
+        }
+        .promo-content p {
+            color: #b0b3c1;
+            margin-bottom: 20px;
+        }
+        
+        /* Стили для баннера с игровыми автоматами */
+        .games-banner {
+            margin: 30px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            height: 300px;
+        }
+        .games-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(15,18,27,0.8) 0%, rgba(15,18,27,0.4) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 40px;
+        }
+        .banner-overlay h2 {
+            font-size: 36px;
+            color: #ffb400;
+            margin-bottom: 15px;
+        }
+        .banner-overlay p {
+            font-size: 18px;
+            color: #fff;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        
+        /* Стили для раздела с провайдерами */
+        .providers-section {
+            margin: 50px 0;
+        }
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .provider-logo {
+            background: #1a1f2e;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80px;
+            border: 1px solid #252b3d;
+            transition: all 0.3s ease;
+        }
+        .provider-logo:hover {
+            border-color: #ffb400;
+            transform: translateY(-5px);
+        }
+        .provider-logo img {
+            max-width: 100%;
+            max-height: 40px;
+            filter: brightness(0.8);
+            transition: all 0.3s ease;
+        }
+        .provider-logo:hover img {
+            filter: brightness(1);
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .benefits-grid, .providers-grid { 
+                grid-template-columns: 1fr; 
+            }
+            .providers-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .nav { gap: 20px; flex-wrap: wrap; justify-content: center; }
+            .header-content { flex-direction: column; gap: 15px; }
+            .hero h1 { font-size: 36px; }
+            .hero { padding: 40px 20px; }
+            .game-header { flex-direction: column; gap: 15px; }
+            .banner-content { flex-direction: column; text-align: center; }
+            .banner-images { justify-content: center; flex-wrap: wrap; }
+            .promo-section { flex-direction: column; }
+            .promo-image { width: 100%; }
+            .games-banner { height: 200px; }
+            .banner-overlay { padding: 0 20px; }
+            .banner-overlay h2 { font-size: 24px; }
+            .banner-overlay p { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхний баннер с изображениями -->
+    <div class="top-banner">
+        <div class="container">
+            <div class="banner-content">
+                <div class="banner-text">
+                    <h2>🔥 ГОРЯЧИЕ АКЦИИ НЕДЕЛИ</h2>
+                    <p>Успей получить бонус до 100% на первый депозит + 200 фриспинов!</p>
+                </div>
+                <div class="banner-images">
+                    <img src="https://cdn.softswiss.net/i/s3/promotions/1x1/bonus.png" alt="Бонусы" class="banner-img">
+                    <img src="https://cdn.softswiss.net/i/s3/promotions/1x1/freespins.png" alt="Фриспины" class="banner-img">
+                    <img src="https://cdn.softswiss.net/i/s3/promotions/1x1/tournament.png" alt="Турниры" class="banner-img">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="https://1wilib.life/casino/list?open=register&p=cnpz" class="logo">DRAGON MONEY</a>
+                <nav class="nav">
+                    <a href="https://1wilib.life/casino/list?open=register&p=cnpz" class="active">Главная</a>
+                    <a href="https://1wilib.life/casino/list?open=register&p=cnpz">Игры</a>
+                    <a href="https://1wilib.life/casino/list?open=register&p=cnpz">Бонусы</a>
+                    <a href="https://1wilib.life/casino/list?open=register&p=cnpz">Поддержка</a>
+                </nav>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-outline" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">Войти</button>
+                    <button class="btn" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">Регистрация</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Баннер с игровыми автоматами -->
+        <div class="games-banner">
+            <img src="https://cdn.softswiss.net/i/s3/backgrounds/1x1/slots-collection.png" alt="Игровые автоматы">
+            <div class="banner-overlay">
+                <h2>БОЛЕЕ 3000 ИГР ОТ ЛУЧШИХ ПРОВАЙДЕРОВ</h2>
+                <p>Играйте в самые популярные слоты, рулетку, покер и блэкджек с живыми дилерами</p>
+                <button class="btn">Смотреть все игры</button>
+            </div>
+        </div>
+
+        <!-- Промо-секция с большим изображением -->
+        <div class="promo-section">
+            <img src="https://cdn.softswiss.net/i/s3/promotions/16x9/jackpot.png" alt="Джекпот" class="promo-image">
+            <div class="promo-content">
+                <h3>🎰 КРУПНЕЙШИЙ ДЖЕКПОТ НЕДЕЛИ</h3>
+                <p>Сумма джекпота уже превысила 5 000 000 рублей! Присоединяйся к игре и стань следующим победителем. Шансы высоки - удача любит смелых!</p>
+                <button class="btn" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">Играть сейчас</button>
+            </div>
+        </div>
+
+        <section class="hero">
+            <h1>DRAGON MONEY</h1>
+            <p>Лучшее онлайн-казино с мгновенными выплатами и щедрыми бонусами. Играйте в самые популярные слоты и live-игры!</p>
+            <button class="cta-large" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">
+                Начать играть сейчас
+            </button>
+        </section>
+
+        <!-- Раздел с провайдерами -->
+        <h2 class="section-title">Наши партнеры</h2>
+        <div class="providers-section">
+            <div class="providers-grid">
+                <div class="provider-logo">
+                    <img src="https://cdn.softswiss.net/i/s3/providers/netent.png" alt="NetEnt">
+                </div>
+                <div class="provider-logo">
+                    <img src="https://cdn.softswiss.net/i/s3/providers/microgaming.png" alt="Microgaming">
+                </div>
+                <div class="provider-logo">
+                    <img src="https://cdn.softswiss.net/i/s3/providers/pragmaticplay.png" alt="Pragmatic Play">
+                </div>
+                <div class="provider-logo">
+                    <img src="https://cdn.softswiss.net/i/s3/providers/playngo.png" alt="Play'n GO">
+                </div>
+                <div class="provider-logo">
+                    <img src="https://cdn.softswiss.net/i/s3/providers/evolution.png" alt="Evolution Gaming">
+                </div>
+                <div class="provider-logo">
+                    <img src="https://cdn.softswiss.net/i/s3/providers/playtech.png" alt="Playtech">
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="game-card" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">
+                <div class="game-header">
+                    <div>
+                        <div class="game-title">🎰 Игровые автоматы</div>
+                        <div class="online">
+                            <div class="online-dot"></div>
+                            3,847 игроков онлайн
+                        </div>
+                    </div>
+                    <button class="btn">Играть</button>
+                </div>
+                <img src="https://cdn.softswiss.net/i/s3/backgrounds/1x1/slots.png" alt="Игровые автоматы" class="category-image">
+                <div class="game-images">
+                    <div class="game-preview">GATES OF OLYMPUS</div>
+                    <div class="game-preview">SWEET BONANZA</div>
+                    <div class="game-preview">BOOK OF DEAD</div>
+                </div>
+            </div>
+
+            <div class="game-card" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">
+                <div class="game-header">
+                    <div>
+                        <div class="game-title">🎴 Live Казино</div>
+                        <div class="online">
+                            <div class="online-dot"></div>
+                            2,156 игроков онлайн
+                        </div>
+                    </div>
+                    <button class="btn">Играть</button>
+                </div>
+                <img src="https://cdn.softswiss.net/i/s3/backgrounds/1x1/live-casino.png" alt="Live казино" class="category-image">
+                <div class="game-images">
+                    <div class="game-preview">LIVE ROULETTE</div>
+                    <div class="game-preview">BLACKJACK</div>
+                    <div class="game-preview">BACCARAT</div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Популярные игры</h2>
+        
+        <div class="grid-3">
+            <div class="game-card" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">
+                <img src="https://cdn.softswiss.net/i/s3/slots/pragmaticplay/gates-of-olympus.png" alt="Gates of Olympus" class="game-image">
+                <div class="game-header">
+                    <div>
+                        <div class="game-title">🪙 Gates of Olympus</div>
+                        <div class="online">
+                            <div class="online-dot"></div>
+                            892 игрока
+                        </div>
+                    </div>
+                    <button class="btn" style="padding: 8px 16px; font-size: 12px;">Играть</button>
+                </div>
+            </div>
+
+            <div class="game-card" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">
+                <img src="https://cdn.softswiss.net/i/s3/slots/pragmaticplay/sweet-bonanza.png" alt="Sweet Bonanza" class="game-image">
+                <div class="game-header">
+                    <div>
+                        <div class="game-title">🍭 Sweet Bonanza</div>
+                        <div class="online">
+                            <div class="online-dot"></div>
+                            756 игроков
+                        </div>
+                    </div>
+                    <button class="btn" style="padding: 8px 16px; font-size: 12px;">Играть</button>
+                </div>
+            </div>
+
+            <div class="game-card" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">
+                <img src="https://cdn.softswiss.net/i/s3/slots/playngo/book-of-dead.png" alt="Book of Dead" class="game-image">
+                <div class="game-header">
+                    <div>
+                        <div class="game-title">📖 Book of Dead</div>
+                        <div class="online">
+                            <div class="online-dot"></div>
+                            634 игрока
+                        </div>
+                    </div>
+                    <button class="btn" style="padding: 8px 16px; font-size: 12px;">Играть</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <div class="game-card" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">
+                <img src="https://cdn.softswiss.net/i/s3/slots/other/plinko.png" alt="Plinko" class="game-image">
+                <div class="game-header">
+                    <div>
+                        <div class="game-title">🔴 Plinko</div>
+                        <div class="online">
+                            <div class="online-dot"></div>
+                            421 игрок
+                        </div>
+                    </div>
+                    <button class="btn" style="padding: 8px 16px; font-size: 12px;">Играть</button>
+                </div>
+            </div>
+
+            <div class="game-card" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">
+                <img src="https://cdn.softswiss.net/i/s3/slots/other/crash.png" alt="Crash Game" class="game-image">
+                <div class="game-header">
+                    <div>
+                        <div class="game-title">🚀 Crash Game</div>
+                        <div class="online">
+                            <div class="online-dot"></div>
+                            518 игроков
+                        </div>
+                    </div>
+                    <button class="btn" style="padding: 8px 16px; font-size: 12px;">Играть</button>
+                </div>
+            </div>
+
+            <div class="game-card" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">
+                <img src="https://cdn.softswiss.net/i/s3/slots/other/double.png" alt="Double" class="game-image">
+                <div class="game-header">
+                    <div>
+                        <div class="game-title">⚡ Double</div>
+                        <div class="online">
+                            <div class="online-dot"></div>
+                            389 игроков
+                        </div>
+                    </div>
+                    <button class="btn" style="padding: 8px 16px; font-size: 12px;">Играть</button>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Наши преимущества</h2>
+        
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">⚡</div>
+                <h3>Мгновенные выплаты</h3>
+                <p>Вывод средств в течение 5 минут 24/7 без комиссий и скрытых платежей</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">🎁</div>
+                <h3>Щедрые бонусы</h3>
+                <p>Приветственный бонус до 100 000 ₽ и ежедневные акции для постоянных игроков</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">🔒</div>
+                <h3>Безопасность</h3>
+                <p>Лицензия Curacao eGaming и современное шифрование данных для защиты игроков</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">📱</div>
+                <h3>Мобильная версия</h3>
+                <p>Играйте с любого устройства - адаптивный дизайн и мобильное приложение</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">👨‍💼</div>
+                <h3>Поддержка 24/7</h3>
+                <p>Круглосуточная служба поддержки на русском языке через чат, email и телефон</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">🏆</div>
+                <h3>Турниры</h3>
+                <p>Еженедельные турниры с крупными призовыми фондами и эксклюзивными призами</p>
+            </div>
+        </div>
+    </main>
+
+    <section class="seo-section">
+        <div class="container">
+            <h1>Dragon Money - Официальный сайт казино</h1>
+            <p>Dragon Money - это премиальная игровая платформа, предлагающая лучшие игровые автоматы от ведущих провайдеров, live-казино с профессиональными дилерами и эксклюзивные игры собственной разработки.</p>
+            
+            <h2>Популярные игровые автоматы</h2>
+            <ul>
+                <li><strong>Gates of Olympus</strong> - культовый слот от Pragmatic Play с множителями до x5000</li>
+                <li><strong>Sweet Bonanza</strong> - красочная игра с системой cascading reels и бонусными вращениями</li>
+                <li><strong>Book of Dead</strong> - легендарный египетский слот с расширяющимися символами</li>
+                <li><strong>Starlight Princess</strong> - аниме-слот с множителями и бесплатными спинами</li>
+            </ul>
+
+            <h2>Преимущества Dragon Money</h2>
+            <ul>
+                <li>✅ Мгновенные выплаты 24/7</li>
+                <li>✅ Приветственный бонус до 100 000 ₽</li>
+                <li>✅ Лицензия Curacao eGaming</li>
+                <li>✅ Поддержка на русском языке</li>
+                <li>✅ Мобильная версия и приложение</li>
+                <li>✅ Турниры с призовыми фондами</li>
+            </ul>
+
+            <div style="text-align: center;">
+                <button class="cta-large" onclick="window.open('https://1wilib.life/casino/list?open=register&p=cnpz', '_blank')">
+                    🎰 Играть в Dragon Money 🎰
+                </button>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
