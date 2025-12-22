@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Crash - Collector Edition</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #1a237e 0%, #311b92 100%);
@@ -20,7 +15,6 @@
             align-items: center;
             padding: 20px;
         }
-        
         .game-container {
             background: white;
             border-radius: 15px;
@@ -29,14 +23,12 @@
             max-width: 900px;
             width: 100%;
         }
-        
         .game-header {
             background: linear-gradient(90deg, #FF9800, #FFB74D);
             color: white;
             padding: 20px;
             text-align: center;
         }
-        
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -45,35 +37,27 @@
             background: #f5f5f5;
             border-bottom: 2px solid #ddd;
         }
-        
-        .stat {
-            text-align: center;
-        }
-        
+        .stat { text-align: center; }
         .stat-value {
             font-size: 1.3em;
             font-weight: bold;
             color: #2196F3;
         }
-        
         .stat-label {
             font-size: 0.85em;
             color: #666;
         }
-        
         .game-area {
             position: relative;
             height: 450px;
             background: linear-gradient(to bottom, #87CEEB, #E0F7FF);
             overflow: hidden;
         }
-        
         #gameCanvas {
             width: 100%;
             height: 100%;
             display: block;
         }
-        
         .multiplier-display {
             position: absolute;
             top: 10px;
@@ -90,7 +74,6 @@
             border: 3px solid #FF9800;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        
         .collector-status {
             position: absolute;
             top: 10px;
@@ -106,18 +89,15 @@
             text-align: center;
             border: 2px solid #FFD700;
         }
-        
         .collector-status.collected {
             background: rgba(76, 175, 80, 0.9);
             animation: pulse 1.5s infinite;
         }
-        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        
         .game-over-panel {
             position: absolute;
             top: 50%;
@@ -133,14 +113,12 @@
             min-width: 320px;
             border: 3px solid #2196F3;
         }
-        
         .win-amount {
             font-size: 2.5em;
             font-weight: bold;
             color: #4CAF50;
             margin: 20px 0;
         }
-        
         .btn-restart {
             padding: 12px 30px;
             background: linear-gradient(45deg, #2196F3, #21CBF3);
@@ -153,18 +131,15 @@
             transition: all 0.3s;
             margin-top: 20px;
         }
-        
         .btn-restart:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        
         .info-panel {
             padding: 20px;
             background: #f8f9fa;
             border-top: 1px solid #dee2e6;
         }
-        
         .skill-selector {
             display: flex;
             gap: 10px;
@@ -172,7 +147,6 @@
             margin-bottom: 15px;
             flex-wrap: wrap;
         }
-        
         .skill-btn {
             padding: 8px 15px;
             border: 2px solid #ddd;
@@ -182,13 +156,11 @@
             transition: all 0.3s;
             font-weight: bold;
         }
-        
         .skill-btn.active {
             background: #2196F3;
             color: white;
             border-color: #1976D2;
         }
-        
         .progress-bar-container {
             width: 100%;
             height: 20px;
@@ -197,14 +169,12 @@
             margin-top: 10px;
             overflow: hidden;
         }
-        
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #4CAF50, #8BC34A);
             width: 0%;
             transition: width 0.3s;
         }
-        
         .instructions {
             text-align: center;
             color: #666;
@@ -212,21 +182,24 @@
             font-size: 0.9em;
             line-height: 1.5;
         }
-        
+        .warning {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(244, 67, 54, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 90;
+            text-align: center;
+            display: none;
+        }
         @media (max-width: 768px) {
-            .stats-bar {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .multiplier-display {
-                font-size: 1.4em;
-                min-width: 120px;
-            }
-            
-            .collector-status {
-                font-size: 0.9em;
-                min-width: 150px;
-            }
+            .stats-bar { grid-template-columns: repeat(3, 1fr); }
+            .multiplier-display { font-size: 1.4em; min-width: 120px; }
+            .collector-status { font-size: 0.9em; min-width: 150px; }
         }
     </style>
 </head>
@@ -236,7 +209,6 @@
             <h1>🎮 Flappy Crash: Collector Edition</h1>
             <p>Собери подкову, чтобы получить выигрыш!</p>
         </div>
-        
         <div class="stats-bar">
             <div class="stat">
                 <div class="stat-value" id="currentMultiplier">1.00x</div>
@@ -259,18 +231,11 @@
                 <div class="stat-label">Время (сек)</div>
             </div>
         </div>
-        
         <div class="game-area">
             <canvas id="gameCanvas"></canvas>
-            
-            <div class="multiplier-display">
-                🪙 × <span id="multiplierValue">1.00</span>
-            </div>
-            
-            <div class="collector-status" id="collectorStatus">
-                🧲 Подкова: Ожидание
-            </div>
-            
+            <div class="multiplier-display">🪙 × <span id="multiplierValue">1.00</span></div>
+            <div class="collector-status" id="collectorStatus">🧲 Подкова: Ожидание</div>
+            <div class="warning" id="limitWarning">⚠️ ДОСТИГНУТ МАКСИМАЛЬНЫЙ ЛИМИТ!</div>
             <div id="gameOverPanel" class="game-over-panel">
                 <h2 id="resultTitle">Результат</h2>
                 <div class="win-amount" id="winAmount">0x</div>
@@ -278,7 +243,6 @@
                 <button class="btn-restart" onclick="startNewGame()">🔄 Новая игра</button>
             </div>
         </div>
-        
         <div class="info-panel">
             <div class="skill-selector">
                 <span>Уровень навыка:</span>
@@ -286,74 +250,49 @@
                 <button class="skill-btn" onclick="changeSkill(0.85)">Средний (0.85)</button>
                 <button class="skill-btn" onclick="changeSkill(1.0)">Профи (1.0)</button>
             </div>
-            
             <div class="progress-bar-container">
                 <div class="progress-bar" id="multiplierProgressBar"></div>
             </div>
             <div style="text-align: center; margin-top: 5px; color: #666;">
                 До 200×: <span id="timeToMax">100.0</span> сек
             </div>
-            
             <div class="instructions">
                 <p>🎯 <strong>Как играть:</strong> Управляйте птичкой (клик/пробел), избегайте труб.</p>
                 <p>🌟 <strong>Соберите золотую подкову</strong> (80×80), чтобы активировать выигрыш!</p>
                 <p>💰 После сбора подковы, при столкновении получите накопленный множитель.</p>
-                <p>🏆 Максимальный выигрыш: 200× (через ~100 секунд)</p>
+                <p>🏆 Максимальный выигрыш: 200× (через 100 секунд или при столкновении)</p>
             </div>
         </div>
     </div>
 
     <script>
-        // ====================
-        // КОНСТАНТЫ И ПАРАМЕТРЫ
-        // ====================
-        const K = 1.0; // Коэффициент сложности
-        const MAX_MULTIPLIER = 200; // Максимальный множитель
-        const BET_AMOUNT = 100; // Ставка
-        
-        // Параметры роста множителя - ОЧЕНЬ МЕДЛЕННЫЙ РОСТ
-        const TIME_TO_MAX = 100; // Время для достижения 200x (секунд)
-        const BASE_TIME = TIME_TO_MAX; // Базовое время для роста
-        const GROWTH_RATE = 0.5; // Коэффициент роста (0.5 = квадратный корень)
-        
-        // Параметры Collector'а
-        const COLLECTOR_SIZE = 80; // УВЕЛИЧЕННЫЙ размер подковы (было 40)
-        const COLLECTOR_REAPPEAR_TIME = 10; // Время до повторного появления (сек)
-        const COLLECTOR_MIN_TIME = 5; // Минимальное время до первого появления
-        const COLLECTOR_MAX_TIME = 25; // Максимальное время до первого появления
-        
-        // ====================
-        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-        // ====================
+        // ==================== КОНСТАНТЫ ====================
+        const MAX_MULTIPLIER = 200;
+        const BET_AMOUNT = 100;
+        const TIME_TO_MAX = 100; // 100 секунд до 200x
+        const COLLECTOR_SIZE = 80;
+        const COLLECTOR_REAPPEAR_TIME = 10;
+        const COLLECTOR_MIN_TIME = 5;
+        const COLLECTOR_MAX_TIME = 25;
+        const LIMIT_WARNING_DURATION = 3; // секунды показа предупреждения
+
+        // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
         let gameState = {
             isPlaying: false,
             gameOver: false,
             gameTime: 0,
             lastTime: 0,
-            
-            // Игровые параметры
             currentMultiplier: 1.0,
             hiddenMaxMultiplier: 0,
             playerSkill: 0.85,
             collected: false,
-            
-            // Статистика
             totalWins: 0,
             totalCoins: 0,
             accumulatedWinnings: 0,
-            
-            // Collector
             collector: {
-                x: 0,
-                y: 0,
-                visible: false,
-                collected: false,
-                timeToAppear: 0,
-                reappearTimer: 0,
-                nextAppearanceTime: 0
+                x: 0, y: 0, visible: false, collected: false,
+                timeToAppear: 0, reappearTimer: 0, nextAppearanceTime: 0
             },
-            
-            // Параметры игры
             bird: { x: 100, y: 200, velocity: 0, radius: 15 },
             pipes: [],
             gameSpeed: 3,
@@ -362,37 +301,30 @@
             pipeFrequency: 150,
             frameCount: 0,
             gravity: 0.5,
-            jumpForce: -10
+            jumpForce: -10,
+            limitReached: false,
+            limitWarningShown: false,
+            limitWarningTimer: 0
         };
-        
-        // ====================
-        // ИНИЦИАЛИЗАЦИЯ
-        // ====================
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
+
         function initGame() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            
-            // Сброс состояния игры
             resetGameState();
-            
-            // Генерируем скрытый лимит
             gameState.hiddenMaxMultiplier = 0.5 + Math.random() * (MAX_MULTIPLIER - 0.5);
-            
-            // Настраиваем Collector
             setupCollector();
-            
             updateUI();
-            
             if (!gameState.isPlaying) {
                 gameState.isPlaying = true;
                 gameState.lastTime = Date.now();
                 requestAnimationFrame(gameLoop);
             }
         }
-        
+
         function resetGameState() {
             gameState.bird.y = canvas.height / 2;
             gameState.bird.velocity = 0;
@@ -402,137 +334,109 @@
             gameState.currentMultiplier = 1.0;
             gameState.collected = false;
             gameState.gameOver = false;
+            gameState.limitReached = false;
+            gameState.limitWarningShown = false;
+            gameState.limitWarningTimer = 0;
+            document.getElementById('limitWarning').style.display = 'none';
         }
-        
+
         function setupCollector() {
             gameState.collector = {
-                x: 0,
-                y: 0,
-                visible: false,
-                collected: false,
-                timeToAppear: 0,
-                reappearTimer: 0,
+                x: 0, y: 0, visible: false, collected: false,
+                timeToAppear: 0, reappearTimer: 0,
                 nextAppearanceTime: COLLECTOR_MIN_TIME + Math.random() * (COLLECTOR_MAX_TIME - COLLECTOR_MIN_TIME)
             };
-            
             document.getElementById('collectorStatus').className = 'collector-status';
             document.getElementById('collectorStatus').textContent = '🧲 Подкова: Ожидание';
         }
-        
-        // ====================
-        // РОСТ МНОЖИТЕЛЯ (ОЧЕНЬ МЕДЛЕННЫЙ)
-        // ====================
+
+        // ==================== ЛИНЕЙНЫЙ РОСТ МНОЖИТЕЛЯ ====================
         function updateMultiplier(deltaTime) {
-            // Ограничение максимального множителя
             if (gameState.currentMultiplier >= MAX_MULTIPLIER) {
                 gameState.currentMultiplier = MAX_MULTIPLIER;
-                if (gameState.collected) {
-                    autoWin();
+                if (gameState.collected) autoWin();
+                return;
+            }
+            if (gameState.currentMultiplier >= gameState.hiddenMaxMultiplier) {
+                gameState.currentMultiplier = gameState.hiddenMaxMultiplier;
+                if (!gameState.limitReached) {
+                    gameState.limitReached = true;
+                    showLimitWarning();
+                    createImpossiblePipe();
                 }
                 return;
             }
-            
-            // Ограничение скрытым лимитом
-            if (gameState.currentMultiplier >= gameState.hiddenMaxMultiplier) {
+            // Линейный рост: 200x за 100 секунд = +2x в секунду
+            gameState.currentMultiplier += (2 * deltaTime);
+            if (gameState.currentMultiplier > gameState.hiddenMaxMultiplier) {
                 gameState.currentMultiplier = gameState.hiddenMaxMultiplier;
-                return;
             }
-            
-            // МЕДЛЕННЫЙ нелинейный рост множителя
-            // Формула: multiplier = 1 + (time/BASE_TIME)^GROWTH_RATE * (MAX_MULTIPLIER-1)
-            // При GROWTH_RATE=0.5 и BASE_TIME=100: за 100 секунд достигается ~200x
-            const timeFactor = Math.min(gameState.gameTime / BASE_TIME, 1);
-            const growthFactor = Math.pow(timeFactor, GROWTH_RATE);
-            
-            // Учитываем skill игрока (чем выше skill, тем быстрее рост)
-            const skillBonus = 1 + (gameState.playerSkill - 0.5) * 0.2; // Слабый эффект skill
-            
-            const targetMultiplier = 1 + growthFactor * (MAX_MULTIPLIER - 1) * skillBonus;
-            
-            // Плавное увеличение множителя
-            const increment = (targetMultiplier - gameState.currentMultiplier) * deltaTime * 0.3;
-            gameState.currentMultiplier += increment;
-            
-            // Ограничение максимумом и скрытым лимитом
-            gameState.currentMultiplier = Math.min(
-                gameState.currentMultiplier,
-                gameState.hiddenMaxMultiplier,
-                MAX_MULTIPLIER
-            );
         }
-        
-        // ====================
-        // COLLECTOR МЕХАНИКА
-        // ====================
+
+        function showLimitWarning() {
+            gameState.limitWarningShown = true;
+            gameState.limitWarningTimer = LIMIT_WARNING_DURATION;
+            document.getElementById('limitWarning').style.display = 'block';
+        }
+
+        function createImpossiblePipe() {
+            // Создаем непреодолимую трубу (без зазора)
+            gameState.pipes.push({
+                x: canvas.width,
+                topHeight: canvas.height / 2 - 1,
+                bottomY: canvas.height / 2 + 1,
+                width: gameState.pipeWidth,
+                isImpossible: true
+            });
+        }
+
+        // ==================== COLLECTOR ====================
         function updateCollector(deltaTime) {
             const collector = gameState.collector;
-            
-            if (collector.collected) {
-                // Уже собрали - больше не появляется
-                return;
-            }
-            
+            if (collector.collected) return;
             if (!collector.visible) {
-                // Ждем появления
                 collector.timeToAppear += deltaTime;
-                
                 if (collector.timeToAppear >= collector.nextAppearanceTime) {
                     spawnCollector();
                 }
             } else {
-                // Collector виден - двигаем его
                 collector.x -= gameState.gameSpeed * 60 * deltaTime;
-                
-                // Проверка сбора
                 if (checkCollectorCollision()) {
                     collectCollector();
                 }
-                
-                // Проверка, пролетел ли мимо
                 if (collector.x + COLLECTOR_SIZE < gameState.bird.x && !collector.collected) {
-                    // Пролетел мимо - исчезает и появится через 10 секунд
                     collector.visible = false;
                     collector.timeToAppear = 0;
                     collector.reappearTimer = COLLECTOR_REAPPEAR_TIME;
                     collector.nextAppearanceTime = COLLECTOR_REAPPEAR_TIME;
                     document.getElementById('collectorStatus').textContent = '🧲 Подкова: Через 10с';
                 }
-                
-                // Удаляем если ушел за экран
                 if (collector.x + COLLECTOR_SIZE < 0) {
                     collector.visible = false;
                 }
             }
-            
-            // Обработка таймера повторного появления
             if (collector.reappearTimer > 0) {
                 collector.reappearTimer -= deltaTime;
                 if (collector.reappearTimer <= 0) {
                     collector.timeToAppear = 0;
-                    collector.nextAppearanceTime = 0.1; // Появится почти сразу
+                    collector.nextAppearanceTime = 0.1;
                 }
             }
         }
-        
+
         function spawnCollector() {
-            // Генерируем случайную позицию Y (избегаем краев)
             const minY = 50;
             const maxY = canvas.height - 50 - COLLECTOR_SIZE;
             const y = minY + Math.random() * (maxY - minY);
-            
-            // Проверяем, нет ли труб в этой области
             let safePosition = true;
             for (const pipe of gameState.pipes) {
                 if (pipe.x < canvas.width + 100 && pipe.x + pipe.width > canvas.width - 100) {
-                    // Труба в зоне появления Collector'а
                     if (y < pipe.topHeight || y + COLLECTOR_SIZE > pipe.bottomY) {
-                        // Пересечение с трубой - ищем другую позицию
                         safePosition = false;
                         break;
                     }
                 }
             }
-            
             if (safePosition) {
                 gameState.collector.x = canvas.width;
                 gameState.collector.y = y;
@@ -540,45 +444,33 @@
                 gameState.collector.timeToAppear = 0;
                 document.getElementById('collectorStatus').textContent = '🧲 Подкова: Появилась!';
             } else {
-                // Не удалось найти безопасную позицию - пробуем через 2 секунды
                 gameState.collector.nextAppearanceTime = 2;
             }
         }
-        
+
         function checkCollectorCollision() {
             const bird = gameState.bird;
             const collector = gameState.collector;
-            
             if (!collector.visible) return false;
-            
-            // Проверка пересечения птички с увеличенной подковой
-            // Увеличиваем зону сбора для удобства
             const collectRadius = bird.radius + COLLECTOR_SIZE * 0.4;
-            
             const centerX = collector.x + COLLECTOR_SIZE / 2;
             const centerY = collector.y + COLLECTOR_SIZE / 2;
-            
             const distanceX = bird.x - centerX;
             const distanceY = bird.y - centerY;
             const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-            
             return distance < collectRadius;
         }
-        
+
         function collectCollector() {
             gameState.collector.visible = false;
             gameState.collector.collected = true;
             gameState.collected = true;
-            
             document.getElementById('collectorStatus').className = 'collector-status collected';
             document.getElementById('collectorStatus').textContent = '✅ Подкова собрана!';
-            
-            // Эффект сбора
             showCollectorEffect();
         }
-        
+
         function showCollectorEffect() {
-            // Визуальный эффект сбора большой подковы
             ctx.save();
             ctx.fillStyle = '#FFD700';
             ctx.globalAlpha = 0.6;
@@ -587,215 +479,170 @@
             ctx.fill();
             ctx.restore();
         }
-        
-        // ====================
-        // ИГРОВОЙ ЦИКЛ
-        // ====================
+
+        // ==================== ИГРОВОЙ ЦИКЛ ====================
         function gameLoop() {
-            if (!gameState.isPlaying || gameState.gameOver) {
-                return;
-            }
-            
-            // Рассчитываем deltaTime
+            if (!gameState.isPlaying || gameState.gameOver) return;
             const currentTime = Date.now();
             const deltaTime = (currentTime - gameState.lastTime) / 1000;
             gameState.lastTime = currentTime;
             const safeDeltaTime = Math.min(deltaTime, 0.1);
-            
-            // Обновляем игровое время
             gameState.gameTime += safeDeltaTime;
-            
-            // Очистка канваса
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Обновление множителя
+
+            // Обновление предупреждения о лимите
+            if (gameState.limitWarningShown) {
+                gameState.limitWarningTimer -= safeDeltaTime;
+                if (gameState.limitWarningTimer <= 0) {
+                    document.getElementById('limitWarning').style.display = 'none';
+                    gameState.limitWarningShown = false;
+                }
+            }
+
+            // Основные обновления
             updateMultiplier(safeDeltaTime);
-            
-            // Обновление и отрисовка фона
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBackground();
-            
-            // Обновление физики птички (БЕЗ СМЕРТИ ОТ ПАДЕНИЯ)
             updateBirdPhysics(safeDeltaTime);
-            
-            // Генерация и обновление труб
             updatePipes(safeDeltaTime);
-            
-            // Обновление Collector'а
             updateCollector(safeDeltaTime);
-            
-            // Проверка столкновений с трубами (ЕДИНСТВЕННЫЙ СПОСОБ ПРОИГРЫША)
-            if (checkPipeCollisions()) {
+
+            // Проверка столкновений с трубами и границами
+            if (checkPipeCollisions() || checkBoundaryCollision()) {
                 handleCrash();
                 return;
             }
-            
-            // Отрисовка всех элементов
+
             drawPipes();
             drawCollector();
             drawBird();
-            
-            // Обновление интерфейса
             updateUI();
-            
             requestAnimationFrame(gameLoop);
         }
-        
+
         function updateBirdPhysics(deltaTime) {
             gameState.bird.velocity += gameState.gravity;
             gameState.bird.y += gameState.bird.velocity * 60 * deltaTime;
-            
-            // Ограничение по верхней границе (без завершения игры)
-            if (gameState.bird.y - gameState.bird.radius < 0) {
-                gameState.bird.y = gameState.bird.radius;
-                gameState.bird.velocity = 0;
-            }
-            
-            // Ограничение по нижней границе (БЕЗ ЗАВЕРШЕНИЯ ИГРЫ)
-            if (gameState.bird.y + gameState.bird.radius > canvas.height) {
-                gameState.bird.y = canvas.height - gameState.bird.radius;
-                gameState.bird.velocity = 0;
-                // НЕ ВЫЗЫВАЕМ gameOver() - птичка просто садится на землю
-            }
         }
-        
+
+        function checkBoundaryCollision() {
+            // Птичка умирает при падении на землю или вылете за верхнюю границу
+            if (gameState.bird.y - gameState.bird.radius < 0) return true; // Верх
+            if (gameState.bird.y + gameState.bird.radius > canvas.height) return true; // Низ
+            return false;
+        }
+
         function updatePipes(deltaTime) {
-            // Генерация новых труб
             gameState.frameCount++;
-            if (gameState.frameCount % gameState.pipeFrequency === 0) {
+            if (gameState.frameCount % gameState.pipeFrequency === 0 && !gameState.limitReached) {
                 createPipe();
             }
-            
-            // Обновление позиций труб
             for (let i = gameState.pipes.length - 1; i >= 0; i--) {
                 const pipe = gameState.pipes[i];
                 pipe.x -= gameState.gameSpeed * 60 * deltaTime;
-                
-                // Удаление вышедших за экран
                 if (pipe.x + pipe.width < 0) {
                     gameState.pipes.splice(i, 1);
                 }
             }
         }
-        
+
         function createPipe() {
             const minHeight = 50;
             const maxHeight = canvas.height - gameState.pipeGap - minHeight;
             const topHeight = minHeight + Math.random() * maxHeight;
-            
-            // Корректируем сложность в зависимости от skill
             const skillFactor = 0.9 + (gameState.playerSkill * 0.2);
             const adjustedGap = gameState.pipeGap * skillFactor;
-            
             gameState.pipes.push({
                 x: canvas.width,
                 topHeight: topHeight,
                 bottomY: topHeight + adjustedGap,
-                width: gameState.pipeWidth
+                width: gameState.pipeWidth,
+                isImpossible: false
             });
         }
-        
+
         function checkPipeCollisions() {
             const bird = gameState.bird;
-            
             for (const pipe of gameState.pipes) {
-                if (bird.x + bird.radius > pipe.x && 
-                    bird.x - bird.radius < pipe.x + pipe.width) {
-                    
-                    if (bird.y - bird.radius < pipe.topHeight || 
-                        bird.y + bird.radius > pipe.bottomY) {
+                if (bird.x + bird.radius > pipe.x && bird.x - bird.radius < pipe.x + pipe.width) {
+                    if (bird.y - bird.radius < pipe.topHeight || bird.y + bird.radius > pipe.bottomY) {
                         return true;
                     }
                 }
             }
             return false;
         }
-        
-        // ====================
-        // ОТРИСОВКА
-        // ====================
+
+        // ==================== ОТРИСОВКА ====================
         function drawBackground() {
-            // Небо
             ctx.fillStyle = '#87CEEB';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Земля
             ctx.fillStyle = '#8BC34A';
             ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
         }
-        
+
         function drawBird() {
             const bird = gameState.bird;
-            
-            // Эффект если Collector собран
             if (gameState.collected) {
                 ctx.save();
                 ctx.shadowColor = '#FFD700';
                 ctx.shadowBlur = 15;
             }
-            
-            // Тело птички
             ctx.fillStyle = '#FFD700';
             ctx.beginPath();
             ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
             ctx.fill();
-            
-            // Глаз
             ctx.fillStyle = 'black';
             ctx.beginPath();
             ctx.arc(bird.x + 8, bird.y - 5, 4, 0, Math.PI * 2);
             ctx.fill();
-            
-            // Клюв
             ctx.fillStyle = '#FF5722';
             ctx.beginPath();
             ctx.moveTo(bird.x + 15, bird.y);
             ctx.lineTo(bird.x + 25, bird.y);
             ctx.lineTo(bird.x + 15, bird.y + 8);
             ctx.fill();
-            
-            if (gameState.collected) {
-                ctx.restore();
-            }
+            if (gameState.collected) ctx.restore();
         }
-        
+
         function drawPipes() {
             for (const pipe of gameState.pipes) {
-                // Верхняя труба
-                ctx.fillStyle = '#388E3C';
-                ctx.fillRect(pipe.x, 0, pipe.width, pipe.topHeight);
-                
-                // Нижняя труба
-                ctx.fillStyle = '#2E7D32';
-                ctx.fillRect(pipe.x, pipe.bottomY, pipe.width, canvas.height - pipe.bottomY);
-                
-                // Края труб
-                ctx.fillStyle = '#1B5E20';
-                ctx.fillRect(pipe.x - 5, pipe.topHeight - 20, pipe.width + 10, 20);
-                ctx.fillRect(pipe.x - 5, pipe.bottomY, pipe.width + 10, 20);
+                if (pipe.isImpossible) {
+                    // Непреодолимая труба - красная, без зазора
+                    ctx.fillStyle = '#D32F2F';
+                    ctx.fillRect(pipe.x, 0, pipe.width, canvas.height);
+                    ctx.fillStyle = '#B71C1C';
+                    ctx.fillRect(pipe.x - 5, 0, pipe.width + 10, 20);
+                    ctx.fillRect(pipe.x - 5, canvas.height - 20, pipe.width + 10, 20);
+                    // Предупреждающий знак
+                    ctx.fillStyle = '#FFD700';
+                    ctx.font = 'bold 20px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('☠️', pipe.x + pipe.width/2, canvas.height/2);
+                } else {
+                    // Обычная труба
+                    ctx.fillStyle = '#388E3C';
+                    ctx.fillRect(pipe.x, 0, pipe.width, pipe.topHeight);
+                    ctx.fillStyle = '#2E7D32';
+                    ctx.fillRect(pipe.x, pipe.bottomY, pipe.width, canvas.height - pipe.bottomY);
+                    ctx.fillStyle = '#1B5E20';
+                    ctx.fillRect(pipe.x - 5, pipe.topHeight - 20, pipe.width + 10, 20);
+                    ctx.fillRect(pipe.x - 5, pipe.bottomY, pipe.width + 10, 20);
+                }
             }
         }
-        
+
         function drawCollector() {
             const collector = gameState.collector;
             if (!collector.visible) return;
-            
             ctx.save();
-            
-            // Анимация вращения и пульсации
             const rotation = (Date.now() / 1000) * 2;
             const pulseScale = 1 + 0.1 * Math.sin(Date.now() / 200);
-            
-            // Переход к центру подковы
             ctx.translate(collector.x + COLLECTOR_SIZE/2, collector.y + COLLECTOR_SIZE/2);
             ctx.scale(pulseScale, pulseScale);
             ctx.rotate(rotation);
-            
-            // Рисуем БОЛЬШУЮ подкову
             ctx.fillStyle = '#FFD700';
             ctx.strokeStyle = '#FF9800';
             ctx.lineWidth = 6;
-            
-            // Основная часть подковы
             ctx.beginPath();
             ctx.arc(0, 0, COLLECTOR_SIZE/2 - 10, 0.5 * Math.PI, 2.5 * Math.PI);
             ctx.lineTo(15, -COLLECTOR_SIZE/3);
@@ -803,103 +650,74 @@
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
-            
-            // Блеск и сияние
             ctx.fillStyle = '#FFF';
             ctx.globalAlpha = 0.8;
             ctx.beginPath();
             ctx.arc(-12, -12, 10, 0, Math.PI * 2);
             ctx.fill();
-            
-            // Внешнее сияние
             ctx.strokeStyle = '#FFF';
             ctx.globalAlpha = 0.3;
             ctx.lineWidth = 8;
             ctx.beginPath();
             ctx.arc(0, 0, COLLECTOR_SIZE/2 + 5, 0, Math.PI * 2);
             ctx.stroke();
-            
             ctx.restore();
         }
-        
-        // ====================
-        // ЛОГИКА ИГРЫ
-        // ====================
+
+        // ==================== ЛОГИКА ИГРЫ ====================
         function handleCrash() {
             gameState.isPlaying = false;
             gameState.gameOver = true;
-            
             let winAmount = 0;
             let message = '';
-            
             if (gameState.collected) {
-                // Выплата при наличии Collector'а
                 winAmount = BET_AMOUNT * gameState.currentMultiplier;
                 gameState.totalCoins += winAmount;
                 gameState.accumulatedWinnings += winAmount;
                 gameState.totalWins++;
-                
                 message = `Вы получили ${gameState.currentMultiplier.toFixed(2)}×\nВыигрыш: ${winAmount.toFixed(0)} монет!`;
                 document.getElementById('resultTitle').textContent = '🎉 Поздравляем!';
                 document.getElementById('resultTitle').style.color = '#4CAF50';
             } else {
-                // Проигрыш без Collector'а
                 message = 'Вы не собрали подкову!\nДля выигрыша нужно сначала собрать золотую подкову.';
                 document.getElementById('resultTitle').textContent = '💥 Вы врезались!';
                 document.getElementById('resultTitle').style.color = '#F44336';
             }
-            
             document.getElementById('winAmount').textContent = `${gameState.currentMultiplier.toFixed(2)}×`;
             document.getElementById('resultMessage').textContent = message;
             document.getElementById('gameOverPanel').style.display = 'block';
-            
             updateUI();
         }
-        
+
         function autoWin() {
             if (!gameState.collected) return;
-            
             gameState.isPlaying = false;
             gameState.gameOver = true;
-            
             const winAmount = BET_AMOUNT * MAX_MULTIPLIER;
             gameState.totalCoins += winAmount;
             gameState.accumulatedWinnings += winAmount;
             gameState.totalWins++;
-            
             document.getElementById('resultTitle').textContent = '🏆 АВТОВЫИГРЫШ!';
             document.getElementById('resultTitle').style.color = '#FFD700';
             document.getElementById('winAmount').textContent = `${MAX_MULTIPLIER}×`;
             document.getElementById('resultMessage').textContent = `Достигнут максимальный множитель!\nВыигрыш: ${winAmount.toFixed(0)} монет!`;
             document.getElementById('gameOverPanel').style.display = 'block';
-            
             updateUI();
         }
-        
-        // ====================
-        // ИНТЕРФЕЙС
-        // ====================
+
+        // ==================== ИНТЕРФЕЙС ====================
         function updateUI() {
-            // Множитель
             const multiplier = gameState.currentMultiplier;
             document.getElementById('multiplierValue').textContent = multiplier.toFixed(2);
             document.getElementById('currentMultiplier').textContent = multiplier.toFixed(2) + 'x';
-            
-            // Прогресс-бар
             const progressPercent = Math.min((multiplier - 1) / (MAX_MULTIPLIER - 1) * 100, 100);
             document.getElementById('multiplierProgressBar').style.width = progressPercent + '%';
-            
-            // Время до максимума (оценочное)
             const remainingTime = Math.max(0, TIME_TO_MAX - gameState.gameTime);
             document.getElementById('timeToMax').textContent = remainingTime.toFixed(1);
-            
-            // Статистика
             document.getElementById('playerSkill').textContent = gameState.playerSkill.toFixed(2);
             document.getElementById('totalWins').textContent = gameState.totalWins;
             document.getElementById('totalCoins').textContent = Math.floor(gameState.totalCoins);
             document.getElementById('gameTime').textContent = gameState.gameTime.toFixed(1);
-            
-            // Обновляем активные кнопки навыка
             document.querySelectorAll('.skill-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.textContent.includes(`(${gameState.playerSkill})`)) {
@@ -907,32 +725,26 @@
                 }
             });
         }
-        
+
         function changeSkill(skill) {
             gameState.playerSkill = skill;
             updateUI();
-            
-            if (!gameState.isPlaying) {
-                startNewGame();
-            } else {
-                alert('Новый уровень навыка вступит в силу в следующем раунде');
-            }
+            if (!gameState.isPlaying) startNewGame();
+            else alert('Новый уровень навыка вступит в силу в следующем раунде');
         }
-        
+
         function startNewGame() {
             document.getElementById('gameOverPanel').style.display = 'none';
             initGame();
         }
-        
-        // ====================
-        // УПРАВЛЕНИЕ
-        // ====================
+
+        // ==================== УПРАВЛЕНИЕ ====================
         function jump() {
             if (gameState.isPlaying && !gameState.gameOver) {
                 gameState.bird.velocity = gameState.jumpForce;
             }
         }
-        
+
         canvas.addEventListener('click', jump);
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space' || e.code === 'ArrowUp') {
@@ -940,11 +752,10 @@
                 e.preventDefault();
             }
         });
-        
+
         window.addEventListener('load', initGame);
         window.addEventListener('resize', initGame);
-        
-        // Экспорт функций
+
         window.startNewGame = startNewGame;
         window.changeSkill = changeSkill;
     </script>
