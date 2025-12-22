@@ -260,6 +260,7 @@
                 <p>🎯 <strong>Как играть:</strong> Управляйте птичкой (клик/пробел), избегайте труб.</p>
                 <p>🌟 <strong>Соберите золотую подкову</strong> (80×80), чтобы активировать выигрыш!</p>
                 <p>💰 После сбора подковы, при столкновении получите накопленный множитель.</p>
+                <p>⏱️ <strong>Подкова появится:</strong> через 5-100 секунд (случайно)</p>
                 <p>🏆 Максимальный выигрыш: 200× (через 100 секунд или при столкновении)</p>
             </div>
         </div>
@@ -270,11 +271,14 @@
         const MAX_MULTIPLIER = 200;
         const BET_AMOUNT = 100;
         const TIME_TO_MAX = 100; // 100 секунд до 200x
+        
+        // ИЗМЕНЕНИЕ: Коллектор появляется от 5 до 100 секунд (было 5-25)
         const COLLECTOR_SIZE = 80;
         const COLLECTOR_REAPPEAR_TIME = 10;
         const COLLECTOR_MIN_TIME = 5;
-        const COLLECTOR_MAX_TIME = 100;
-        const LIMIT_WARNING_DURATION = 3; // секунды показа предупреждения
+        const COLLECTOR_MAX_TIME = 100; // ИЗМЕНЕНО с 25 на 100
+        
+        const LIMIT_WARNING_DURATION = 3;
 
         // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
         let gameState = {
@@ -341,13 +345,15 @@
         }
 
         function setupCollector() {
+            // ИЗМЕНЕНИЕ: Теперь nextAppearanceTime от 5 до 100 секунд
             gameState.collector = {
                 x: 0, y: 0, visible: false, collected: false,
                 timeToAppear: 0, reappearTimer: 0,
                 nextAppearanceTime: COLLECTOR_MIN_TIME + Math.random() * (COLLECTOR_MAX_TIME - COLLECTOR_MIN_TIME)
             };
             document.getElementById('collectorStatus').className = 'collector-status';
-            document.getElementById('collectorStatus').textContent = '🧲 Подкова: Ожидание';
+            document.getElementById('collectorStatus').textContent = 
+                `🧲 Подкова: Через ${gameState.collector.nextAppearanceTime.toFixed(1)}с`;
         }
 
         // ==================== ЛИНЕЙНЫЙ РОСТ МНОЖИТЕЛЯ ====================
@@ -394,8 +400,16 @@
         function updateCollector(deltaTime) {
             const collector = gameState.collector;
             if (collector.collected) return;
+            
             if (!collector.visible) {
                 collector.timeToAppear += deltaTime;
+                // Обновляем текст статуса (сколько осталось до появления)
+                const timeLeft = Math.max(0, collector.nextAppearanceTime - collector.timeToAppear);
+                if (timeLeft > 0) {
+                    document.getElementById('collectorStatus').textContent = 
+                        `🧲 Подкова: Через ${timeLeft.toFixed(1)}с`;
+                }
+                
                 if (collector.timeToAppear >= collector.nextAppearanceTime) {
                     spawnCollector();
                 }
@@ -415,6 +429,7 @@
                     collector.visible = false;
                 }
             }
+            
             if (collector.reappearTimer > 0) {
                 collector.reappearTimer -= deltaTime;
                 if (collector.reappearTimer <= 0) {
@@ -489,7 +504,6 @@
             const safeDeltaTime = Math.min(deltaTime, 0.1);
             gameState.gameTime += safeDeltaTime;
 
-            // Обновление предупреждения о лимите
             if (gameState.limitWarningShown) {
                 gameState.limitWarningTimer -= safeDeltaTime;
                 if (gameState.limitWarningTimer <= 0) {
@@ -498,7 +512,6 @@
                 }
             }
 
-            // Основные обновления
             updateMultiplier(safeDeltaTime);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBackground();
@@ -506,7 +519,6 @@
             updatePipes(safeDeltaTime);
             updateCollector(safeDeltaTime);
 
-            // Проверка столкновений с трубами и границами
             if (checkPipeCollisions() || checkBoundaryCollision()) {
                 handleCrash();
                 return;
@@ -525,9 +537,8 @@
         }
 
         function checkBoundaryCollision() {
-            // Птичка умирает при падении на землю или вылете за верхнюю границу
-            if (gameState.bird.y - gameState.bird.radius < 0) return true; // Верх
-            if (gameState.bird.y + gameState.bird.radius > canvas.height) return true; // Низ
+            if (gameState.bird.y - gameState.bird.radius < 0) return true;
+            if (gameState.bird.y + gameState.bird.radius > canvas.height) return true;
             return false;
         }
 
@@ -607,19 +618,16 @@
         function drawPipes() {
             for (const pipe of gameState.pipes) {
                 if (pipe.isImpossible) {
-                    // Непреодолимая труба - красная, без зазора
                     ctx.fillStyle = '#D32F2F';
                     ctx.fillRect(pipe.x, 0, pipe.width, canvas.height);
                     ctx.fillStyle = '#B71C1C';
                     ctx.fillRect(pipe.x - 5, 0, pipe.width + 10, 20);
                     ctx.fillRect(pipe.x - 5, canvas.height - 20, pipe.width + 10, 20);
-                    // Предупреждающий знак
                     ctx.fillStyle = '#FFD700';
                     ctx.font = 'bold 20px Arial';
                     ctx.textAlign = 'center';
                     ctx.fillText('☠️', pipe.x + pipe.width/2, canvas.height/2);
                 } else {
-                    // Обычная труба
                     ctx.fillStyle = '#388E3C';
                     ctx.fillRect(pipe.x, 0, pipe.width, pipe.topHeight);
                     ctx.fillStyle = '#2E7D32';
