@@ -28,6 +28,38 @@
             color: white;
             padding: 20px;
             text-align: center;
+            position: relative;
+        }
+        .header-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .control-btn#startBtn {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        }
+        .control-btn#startBtn:hover {
+            background: linear-gradient(45deg, #388E3C, #689F38);
         }
         .volatility-selector {
             display: flex;
@@ -246,11 +278,60 @@
             text-align: center;
             display: none;
         }
+        .start-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 100;
+            width: 80%;
+            max-width: 500px;
+            border: 4px solid #2196F3;
+        }
+        .start-screen h2 {
+            color: #2196F3;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        .start-screen p {
+            margin: 15px 0;
+            color: #666;
+            font-size: 1.1em;
+        }
+        .current-mode-info {
+            background: #E3F2FD;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #2196F3;
+        }
+        .btn-start {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
         @media (max-width: 768px) {
             .stats-bar { grid-template-columns: repeat(3, 1fr); }
             .multiplier-display { font-size: 1.4em; min-width: 120px; }
             .collector-status { font-size: 0.9em; min-width: 150px; }
             .volatility-btn { min-width: 120px; padding: 10px 15px; }
+            .header-controls { flex-direction: column; align-items: center; }
+            .control-btn { width: 200px; }
         }
     </style>
 </head>
@@ -259,6 +340,17 @@
         <div class="game-header">
             <h1>🎮 Flappy Crash: Режимы волатильности</h1>
             <p>Выберите уровень риска и потенциальной награды!</p>
+            <div class="header-controls">
+                <button id="startBtn" class="control-btn">
+                    🎮 Начать игру
+                </button>
+                <button id="pauseBtn" class="control-btn">
+                    ⏸️ Пауза
+                </button>
+                <button id="resetBtn" class="control-btn">
+                    🔄 Сбросить статистику
+                </button>
+            </div>
         </div>
         
         <div class="volatility-selector">
@@ -304,11 +396,29 @@
             <div class="multiplier-display">🪙 × <span id="multiplierValue">1.00</span></div>
             <div class="collector-status" id="collectorStatus">🧲 Подкова: Ожидание</div>
             <div class="warning" id="limitWarning">⚠️ ДОСТИГНУТ МАКСИМАЛЬНЫЙ ЛИМИТ!</div>
+            
+            <!-- Стартовый экран -->
+            <div id="startScreen" class="start-screen">
+                <h2>🎯 Flappy Crash</h2>
+                <p><strong>Добро пожаловать в игру!</strong></p>
+                <div class="current-mode-info">
+                    <p>Выбран режим: <strong id="currentModeName">Низкая волатильность</strong></p>
+                    <p>Целевой множитель: <strong id="currentTarget">x3</strong></p>
+                    <p>Вероятность выигрыша: <strong id="currentProbability">~33%</strong></p>
+                </div>
+                <p>🎮 <strong>Управление:</strong> Клик/Пробел - прыжок</p>
+                <p>💰 <strong>Цель:</strong> Соберите подкову и не врезайтесь в трубы!</p>
+                <p>🎯 <strong>Подкова появится через случайное время</strong></p>
+                <button class="btn-start" onclick="startGame()">🎮 НАЧАТЬ ИГРУ</button>
+            </div>
+            
+            <!-- Экран окончания игры -->
             <div id="gameOverPanel" class="game-over-panel">
                 <h2 id="resultTitle">Результат</h2>
                 <div class="win-amount" id="winAmount">0x</div>
                 <p id="resultMessage">Соберите подкову для получения выигрыша!</p>
-                <button class="btn-restart" onclick="startNewGame()">🔄 Новая игра</button>
+                <button class="btn-restart" onclick="restartGame()">🔄 Новая игра</button>
+                <button class="btn-restart" onclick="returnToMenu()" style="background: linear-gradient(45deg, #FF9800, #FFB74D); margin-left: 10px;">🏠 В меню</button>
             </div>
         </div>
         
@@ -391,6 +501,9 @@
         const LIMIT_WARNING_DURATION = 3;
 
         let currentConfig = VOLATILITY_CONFIGS.low;
+        let gameRunning = false;
+        let gamePaused = false;
+        let animationFrameId = null;
         
         let gameState = {
             isPlaying: false,
@@ -427,20 +540,71 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        function initGame() {
+        function initCanvas() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            resetGameState();
-            setupCollector();
-            updateUI();
-            if (!gameState.isPlaying) {
-                gameState.isPlaying = true;
-                gameState.lastTime = Date.now();
-                requestAnimationFrame(gameLoop);
+            drawStartScreen();
+        }
+
+        function drawStartScreen() {
+            if (!ctx) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Фон
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#8BC34A';
+            ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
+            
+            // Солнце
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(canvas.width - 50, 50, 30, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Облака
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            for(let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.arc(100 + i*200, 80, 20, 0, Math.PI * 2);
+                ctx.arc(120 + i*200, 70, 25, 0, Math.PI * 2);
+                ctx.arc(140 + i*200, 80, 20, 0, Math.PI * 2);
+                ctx.fill();
             }
+            
+            // Птичка
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(150, canvas.height/2, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(158, canvas.height/2 - 5, 4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Подкова
+            const horseshoeX = canvas.width - 150;
+            const horseshoeY = canvas.height/2;
+            ctx.save();
+            ctx.translate(horseshoeX, horseshoeY);
+            ctx.rotate(Math.PI/4);
+            ctx.fillStyle = '#FFD700';
+            ctx.strokeStyle = '#FF9800';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.arc(0, 0, 25, 0.5 * Math.PI, 2.5 * Math.PI);
+            ctx.lineTo(8, -15);
+            ctx.arc(0, 0, 15, 2.5 * Math.PI, 0.5 * Math.PI, true);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
         }
 
         function resetGameState() {
+            if (!canvas) return;
+            
             gameState.bird.y = canvas.height / 2;
             gameState.bird.velocity = 0;
             gameState.pipes = [];
@@ -462,7 +626,7 @@
             gameState.pipeFrequency = currentConfig.pipeFrequency;
             
             document.getElementById('limitWarning').style.display = 'none';
-            document.getElementById('progressBar').style.background = currentConfig.progressBarColor;
+            document.getElementById('multiplierProgressBar').style.background = currentConfig.progressBarColor;
         }
 
         function setupCollector() {
@@ -472,9 +636,106 @@
                 nextAppearanceTime: currentConfig.collectorMinTime + 
                     Math.random() * (currentConfig.collectorMaxTime - currentConfig.collectorMinTime)
             };
-            document.getElementById('collectorStatus').className = 'collector-status';
-            document.getElementById('collectorStatus').textContent = 
-                `🧲 Подкова: Через ${gameState.collector.nextAppearanceTime.toFixed(1)}с`;
+            
+            const collectorStatus = document.getElementById('collectorStatus');
+            if (collectorStatus) {
+                collectorStatus.className = 'collector-status';
+                collectorStatus.textContent = `🧲 Подкова: Через ${gameState.collector.nextAppearanceTime.toFixed(1)}с`;
+            }
+        }
+
+        // ==================== ИГРОВЫЕ ФУНКЦИИ ====================
+        function startGame() {
+            console.log("Старт игры...");
+            
+            // Скрываем экраны
+            const startScreen = document.getElementById('startScreen');
+            const gameOverPanel = document.getElementById('gameOverPanel');
+            if (startScreen) startScreen.style.display = 'none';
+            if (gameOverPanel) gameOverPanel.style.display = 'none';
+            
+            // Инициализируем canvas
+            if (!canvas) {
+                console.error("Canvas не найден!");
+                return;
+            }
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            // Сбрасываем состояние
+            gameRunning = true;
+            gamePaused = false;
+            gameState.isPlaying = true;
+            gameState.gameOver = false;
+            
+            resetGameState();
+            setupCollector();
+            updateUI();
+            
+            gameState.lastTime = Date.now();
+            
+            // Запускаем игровой цикл
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            gameLoop();
+        }
+
+        function restartGame() {
+            console.log("Перезапуск игры...");
+            document.getElementById('gameOverPanel').style.display = 'none';
+            startGame();
+        }
+
+        function returnToMenu() {
+            console.log("Возврат в меню...");
+            
+            // Скрываем экран окончания игры
+            const gameOverPanel = document.getElementById('gameOverPanel');
+            if (gameOverPanel) gameOverPanel.style.display = 'none';
+            
+            // Показываем стартовый экран
+            const startScreen = document.getElementById('startScreen');
+            if (startScreen) startScreen.style.display = 'block';
+            
+            // Останавливаем игру
+            gameRunning = false;
+            gameState.isPlaying = false;
+            
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            
+            // Рисуем стартовый экран
+            if (canvas) {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                drawStartScreen();
+            }
+        }
+
+        function pauseGame() {
+            gamePaused = !gamePaused;
+            const pauseBtn = document.getElementById('pauseBtn');
+            if (pauseBtn) {
+                pauseBtn.innerHTML = gamePaused ? '▶️ Продолжить' : '⏸️ Пауза';
+            }
+            
+            if (!gamePaused && gameRunning) {
+                gameState.lastTime = Date.now();
+                gameLoop();
+            }
+        }
+
+        function resetStats() {
+            if (confirm("Вы уверены, что хотите сбросить всю статистику?")) {
+                gameState.totalWins = 0;
+                gameState.totalCoins = 0;
+                gameState.accumulatedWinnings = 0;
+                updateUI();
+            }
         }
 
         // ==================== РОСТ МНОЖИТЕЛЯ ====================
@@ -508,10 +769,15 @@
         function showLimitWarning() {
             gameState.limitWarningShown = true;
             gameState.limitWarningTimer = LIMIT_WARNING_DURATION;
-            document.getElementById('limitWarning').style.display = 'block';
+            const limitWarning = document.getElementById('limitWarning');
+            if (limitWarning) {
+                limitWarning.style.display = 'block';
+            }
         }
 
         function createImpossiblePipe() {
+            if (!canvas) return;
+            
             gameState.pipes.push({
                 x: canvas.width,
                 topHeight: canvas.height / 2 - 1,
@@ -530,8 +796,10 @@
                 collector.timeToAppear += deltaTime;
                 const timeLeft = Math.max(0, collector.nextAppearanceTime - collector.timeToAppear);
                 if (timeLeft > 0) {
-                    document.getElementById('collectorStatus').textContent = 
-                        `🧲 Подкова: Через ${timeLeft.toFixed(1)}с`;
+                    const collectorStatus = document.getElementById('collectorStatus');
+                    if (collectorStatus) {
+                        collectorStatus.textContent = `🧲 Подкова: Через ${timeLeft.toFixed(1)}с`;
+                    }
                 }
                 
                 if (collector.timeToAppear >= collector.nextAppearanceTime) {
@@ -547,7 +815,10 @@
                     collector.timeToAppear = 0;
                     collector.reappearTimer = COLLECTOR_REAPPEAR_TIME;
                     collector.nextAppearanceTime = COLLECTOR_REAPPEAR_TIME;
-                    document.getElementById('collectorStatus').textContent = '🧲 Подкова: Через 10с';
+                    const collectorStatus = document.getElementById('collectorStatus');
+                    if (collectorStatus) {
+                        collectorStatus.textContent = '🧲 Подкова: Через 10с';
+                    }
                 }
                 if (collector.x + COLLECTOR_SIZE < 0) {
                     collector.visible = false;
@@ -564,6 +835,8 @@
         }
 
         function spawnCollector() {
+            if (!canvas) return;
+            
             const minY = 50;
             const maxY = canvas.height - 50 - COLLECTOR_SIZE;
             const y = minY + Math.random() * (maxY - minY);
@@ -583,7 +856,10 @@
                 gameState.collector.y = y;
                 gameState.collector.visible = true;
                 gameState.collector.timeToAppear = 0;
-                document.getElementById('collectorStatus').textContent = '🧲 Подкова: Появилась!';
+                const collectorStatus = document.getElementById('collectorStatus');
+                if (collectorStatus) {
+                    collectorStatus.textContent = '🧲 Подкова: Появилась!';
+                }
             } else {
                 gameState.collector.nextAppearanceTime = 2;
             }
@@ -608,12 +884,19 @@
             gameState.collector.visible = false;
             gameState.collector.collected = true;
             gameState.collected = true;
-            document.getElementById('collectorStatus').className = 'collector-status collected';
-            document.getElementById('collectorStatus').textContent = '✅ Подкова собрана!';
+            
+            const collectorStatus = document.getElementById('collectorStatus');
+            if (collectorStatus) {
+                collectorStatus.className = 'collector-status collected';
+                collectorStatus.textContent = '✅ Подкова собрана!';
+            }
+            
             showCollectorEffect();
         }
 
         function showCollectorEffect() {
+            if (!ctx) return;
+            
             ctx.save();
             ctx.fillStyle = '#FFD700';
             ctx.globalAlpha = 0.6;
@@ -625,7 +908,9 @@
 
         // ==================== ИГРОВОЙ ЦИКЛ ====================
         function gameLoop() {
-            if (!gameState.isPlaying || gameState.gameOver) return;
+            if (!gameRunning || gamePaused || gameState.gameOver) {
+                return;
+            }
             
             const currentTime = Date.now();
             const deltaTime = (currentTime - gameState.lastTime) / 1000;
@@ -636,12 +921,18 @@
             if (gameState.limitWarningShown) {
                 gameState.limitWarningTimer -= safeDeltaTime;
                 if (gameState.limitWarningTimer <= 0) {
-                    document.getElementById('limitWarning').style.display = 'none';
+                    const limitWarning = document.getElementById('limitWarning');
+                    if (limitWarning) {
+                        limitWarning.style.display = 'none';
+                    }
                     gameState.limitWarningShown = false;
                 }
             }
 
             updateMultiplier(safeDeltaTime);
+            
+            if (!ctx) return;
+            
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBackground();
             updateBirdPhysics(safeDeltaTime);
@@ -657,7 +948,8 @@
             drawCollector();
             drawBird();
             updateUI();
-            requestAnimationFrame(gameLoop);
+            
+            animationFrameId = requestAnimationFrame(gameLoop);
         }
 
         function updateBirdPhysics(deltaTime) {
@@ -666,6 +958,8 @@
         }
 
         function checkBoundaryCollision() {
+            if (!canvas) return false;
+            
             if (gameState.bird.y - gameState.bird.radius < 0) return true;
             if (gameState.bird.y + gameState.bird.radius > canvas.height) return true;
             return false;
@@ -695,6 +989,8 @@
         }
 
         function createPipe() {
+            if (!canvas) return;
+            
             const minHeight = 50;
             const maxHeight = canvas.height - gameState.pipeGap - minHeight;
             const topHeight = minHeight + Math.random() * maxHeight;
@@ -724,6 +1020,8 @@
 
         // ==================== ОТРИСОВКА ====================
         function drawBackground() {
+            if (!ctx || !canvas) return;
+            
             ctx.fillStyle = '#87CEEB';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#8BC34A';
@@ -731,6 +1029,8 @@
         }
 
         function drawBird() {
+            if (!ctx) return;
+            
             const bird = gameState.bird;
             if (gameState.collected) {
                 ctx.save();
@@ -755,6 +1055,8 @@
         }
 
         function drawPipes() {
+            if (!ctx || !canvas) return;
+            
             for (const pipe of gameState.pipes) {
                 if (pipe.isImpossible) {
                     ctx.fillStyle = '#D32F2F';
@@ -779,9 +1081,9 @@
         }
 
         function drawCollector() {
-            const collector = gameState.collector;
-            if (!collector.visible) return;
+            if (!ctx || !gameState.collector.visible) return;
             
+            const collector = gameState.collector;
             ctx.save();
             const rotation = (Date.now() / 1000) * 2;
             const pulseScale = 1 + 0.1 * Math.sin(Date.now() / 200);
@@ -817,6 +1119,7 @@
 
         // ==================== ЛОГИКА ИГРЫ ====================
         function handleCrash() {
+            gameRunning = false;
             gameState.isPlaying = false;
             gameState.gameOver = true;
             let winAmount = 0;
@@ -829,23 +1132,42 @@
                 gameState.totalWins++;
                 
                 message = `Вы получили ${gameState.currentMultiplier.toFixed(2)}×\nВыигрыш: ${winAmount.toFixed(0)} монет!`;
-                document.getElementById('resultTitle').textContent = '🎉 Поздравляем!';
-                document.getElementById('resultTitle').style.color = '#4CAF50';
+                
+                const resultTitle = document.getElementById('resultTitle');
+                if (resultTitle) {
+                    resultTitle.textContent = '🎉 Поздравляем!';
+                    resultTitle.style.color = '#4CAF50';
+                }
             } else {
                 message = 'Вы не собрали подкову!\nДля выигрыша нужно сначала собрать золотую подкову.';
-                document.getElementById('resultTitle').textContent = '💥 Вы врезались!';
-                document.getElementById('resultTitle').style.color = '#F44336';
+                
+                const resultTitle = document.getElementById('resultTitle');
+                if (resultTitle) {
+                    resultTitle.textContent = '💥 Вы врезались!';
+                    resultTitle.style.color = '#F44336';
+                }
             }
             
-            document.getElementById('winAmount').textContent = `${gameState.currentMultiplier.toFixed(2)}×`;
-            document.getElementById('resultMessage').textContent = message;
-            document.getElementById('gameOverPanel').style.display = 'block';
+            const winAmountEl = document.getElementById('winAmount');
+            const resultMessageEl = document.getElementById('resultMessage');
+            const gameOverPanel = document.getElementById('gameOverPanel');
+            
+            if (winAmountEl) winAmountEl.textContent = `${gameState.currentMultiplier.toFixed(2)}×`;
+            if (resultMessageEl) resultMessageEl.textContent = message;
+            if (gameOverPanel) gameOverPanel.style.display = 'block';
+            
             updateUI();
+            
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
         }
 
         function autoWin() {
             if (!gameState.collected) return;
             
+            gameRunning = false;
             gameState.isPlaying = false;
             gameState.gameOver = true;
             const winAmount = BET_AMOUNT * currentConfig.maxMultiplier;
@@ -853,36 +1175,61 @@
             gameState.accumulatedWinnings += winAmount;
             gameState.totalWins++;
             
-            document.getElementById('resultTitle').textContent = '🏆 АВТОВЫИГРЫШ!';
-            document.getElementById('resultTitle').style.color = '#FFD700';
-            document.getElementById('winAmount').textContent = `${currentConfig.maxMultiplier}×`;
-            document.getElementById('resultMessage').textContent = 
-                `Достигнут максимальный множитель!\nВыигрыш: ${winAmount.toFixed(0)} монет!`;
-            document.getElementById('gameOverPanel').style.display = 'block';
+            const resultTitle = document.getElementById('resultTitle');
+            const winAmountEl = document.getElementById('winAmount');
+            const resultMessageEl = document.getElementById('resultMessage');
+            const gameOverPanel = document.getElementById('gameOverPanel');
+            
+            if (resultTitle) {
+                resultTitle.textContent = '🏆 АВТОВЫИГРЫШ!';
+                resultTitle.style.color = '#FFD700';
+            }
+            if (winAmountEl) winAmountEl.textContent = `${currentConfig.maxMultiplier}×`;
+            if (resultMessageEl) {
+                resultMessageEl.textContent = `Достигнут максимальный множитель!\nВыигрыш: ${winAmount.toFixed(0)} монет!`;
+            }
+            if (gameOverPanel) gameOverPanel.style.display = 'block';
+            
             updateUI();
+            
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
         }
 
         // ==================== ИНТЕРФЕЙС ====================
         function updateUI() {
             const multiplier = gameState.currentMultiplier;
-            document.getElementById('multiplierValue').textContent = multiplier.toFixed(2);
-            document.getElementById('currentMultiplier').textContent = multiplier.toFixed(2) + 'x';
+            
+            const multiplierValueEl = document.getElementById('multiplierValue');
+            const currentMultiplierEl = document.getElementById('currentMultiplier');
+            const multiplierProgressBar = document.getElementById('multiplierProgressBar');
+            const timeToTargetEl = document.getElementById('timeToTarget');
+            const volatilityModeEl = document.getElementById('volatilityMode');
+            const totalWinsEl = document.getElementById('totalWins');
+            const totalCoinsEl = document.getElementById('totalCoins');
+            const gameTimeEl = document.getElementById('gameTime');
+            
+            if (multiplierValueEl) multiplierValueEl.textContent = multiplier.toFixed(2);
+            if (currentMultiplierEl) currentMultiplierEl.textContent = multiplier.toFixed(2) + 'x';
             
             // Прогресс до целевого множителя
             const target = currentConfig.targetMultiplier;
             const progressPercent = Math.min((multiplier - 1) / (target - 1) * 100, 100);
-            document.getElementById('multiplierProgressBar').style.width = progressPercent + '%';
-            document.getElementById('multiplierProgressBar').style.background = currentConfig.progressBarColor;
+            if (multiplierProgressBar) {
+                multiplierProgressBar.style.width = progressPercent + '%';
+                multiplierProgressBar.style.background = currentConfig.progressBarColor;
+            }
             
             // Время до целевого множителя
             const timeToTarget = Math.max(0, (target - 1) / currentConfig.multiplierGrowth - gameState.gameTime);
-            document.getElementById('timeToTarget').textContent = timeToTarget.toFixed(1);
+            if (timeToTargetEl) timeToTargetEl.textContent = timeToTarget.toFixed(1);
             
-            document.getElementById('volatilityMode').textContent = currentConfig.name;
-            document.getElementById('playerSkill').textContent = gameState.playerSkill.toFixed(2);
-            document.getElementById('totalWins').textContent = gameState.totalWins;
-            document.getElementById('totalCoins').textContent = Math.floor(gameState.totalCoins);
-            document.getElementById('gameTime').textContent = gameState.gameTime.toFixed(1);
+            if (volatilityModeEl) volatilityModeEl.textContent = currentConfig.name;
+            if (totalWinsEl) totalWinsEl.textContent = gameState.totalWins;
+            if (totalCoinsEl) totalCoinsEl.textContent = Math.floor(gameState.totalCoins);
+            if (gameTimeEl) gameTimeEl.textContent = gameState.gameTime.toFixed(1);
             
             document.querySelectorAll('.skill-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -892,21 +1239,32 @@
             });
         }
 
+        function updateStartScreen() {
+            const currentModeName = document.getElementById('currentModeName');
+            const currentTarget = document.getElementById('currentTarget');
+            const currentProbability = document.getElementById('currentProbability');
+            
+            if (currentModeName) currentModeName.textContent = currentConfig.name;
+            if (currentTarget) currentTarget.textContent = `x${currentConfig.targetMultiplier}`;
+            if (currentProbability) currentProbability.textContent = `~${(currentConfig.winProbability * 100).toFixed(2)}%`;
+        }
+
         function changeVolatility(mode) {
             // Обновляем активную кнопку
             document.querySelectorAll('.volatility-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            document.querySelector(`.volatility-btn.${mode}`).classList.add('active');
+            const selectedBtn = document.querySelector(`.volatility-btn.${mode}`);
+            if (selectedBtn) selectedBtn.classList.add('active');
             
             // Обновляем конфигурацию
             currentConfig = VOLATILITY_CONFIGS[mode];
             gameState.volatilityMode = mode;
             
-            // Перезапускаем игру
-            if (!gameState.isPlaying) {
-                startNewGame();
-            } else {
+            // Обновляем стартовый экран
+            updateStartScreen();
+            
+            if (gameRunning) {
                 alert('Новый режим вступит в силу в следующем раунде');
             }
         }
@@ -914,34 +1272,64 @@
         function changeSkill(skill) {
             gameState.playerSkill = skill;
             updateUI();
-            if (!gameState.isPlaying) startNewGame();
-            else alert('Новый уровень навыка вступит в силу в следующем раунде');
-        }
-
-        function startNewGame() {
-            document.getElementById('gameOverPanel').style.display = 'none';
-            initGame();
+            if (gameRunning) {
+                alert('Новый уровень навыка вступит в силу в следующем раунде');
+            }
         }
 
         // ==================== УПРАВЛЕНИЕ ====================
         function jump() {
-            if (gameState.isPlaying && !gameState.gameOver) {
+            if (gameRunning && !gamePaused && !gameState.gameOver) {
                 gameState.bird.velocity = gameState.jumpForce;
             }
         }
 
-        canvas.addEventListener('click', jump);
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' || e.code === 'ArrowUp') {
-                jump();
-                e.preventDefault();
+        // Инициализация управления
+        function initControls() {
+            if (canvas) {
+                canvas.addEventListener('click', jump);
+            }
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' || e.code === 'ArrowUp') {
+                    jump();
+                    e.preventDefault();
+                } else if (e.code === 'KeyP') {
+                    pauseGame();
+                }
+            });
+            
+            // Инициализация кнопок
+            const startBtn = document.getElementById('startBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            
+            if (startBtn) startBtn.addEventListener('click', startGame);
+            if (pauseBtn) pauseBtn.addEventListener('click', pauseGame);
+            if (resetBtn) resetBtn.addEventListener('click', resetStats);
+        }
+
+        // ==================== ЗАПУСК ====================
+        window.addEventListener('load', () => {
+            console.log("Загрузка игры...");
+            initCanvas();
+            updateStartScreen();
+            initControls();
+        });
+        
+        window.addEventListener('resize', () => {
+            if (!gameRunning) {
+                initCanvas();
+            } else if (canvas) {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
             }
         });
 
-        window.addEventListener('load', initGame);
-        window.addEventListener('resize', initGame);
-
-        window.startNewGame = startNewGame;
+        // Экспортируем функции для глобального доступа
+        window.startGame = startGame;
+        window.restartGame = restartGame;
+        window.returnToMenu = returnToMenu;
         window.changeSkill = changeSkill;
         window.changeVolatility = changeVolatility;
     </script>
