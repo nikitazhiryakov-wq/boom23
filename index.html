@@ -2,10 +2,16 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Flappy Crash - Выбор волатильности</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #1a237e 0%, #311b92 100%);
@@ -13,7 +19,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 10px;
+            touch-action: manipulation;
+            overflow-x: hidden;
         }
         .game-container {
             background: white;
@@ -22,23 +30,32 @@
             overflow: hidden;
             max-width: 1000px;
             width: 100%;
+            min-width: 320px;
         }
         .game-header {
             background: linear-gradient(90deg, #FF9800, #FFB74D);
             color: white;
-            padding: 20px;
+            padding: 15px 10px;
             text-align: center;
             position: relative;
+        }
+        .game-header h1 {
+            font-size: clamp(1.2em, 4vw, 1.8em);
+            margin-bottom: 5px;
+        }
+        .game-header p {
+            font-size: clamp(0.8em, 3vw, 1em);
+            margin-bottom: 10px;
         }
         .header-controls {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 10px;
             margin-top: 10px;
             flex-wrap: wrap;
         }
         .control-btn {
-            padding: 10px 25px;
+            padding: 10px 15px;
             border: none;
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.2);
@@ -46,10 +63,14 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 1em;
+            font-size: clamp(0.8em, 3vw, 1em);
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 5px;
+            min-height: 44px;
+            flex: 1;
+            min-width: 120px;
         }
         .control-btn:hover {
             background: rgba(255, 255, 255, 0.3);
@@ -63,26 +84,29 @@
         }
         .volatility-selector {
             display: flex;
-            gap: 15px;
+            gap: 8px;
             justify-content: center;
-            padding: 15px;
+            padding: 12px 8px;
             background: #f8f9fa;
             border-bottom: 2px solid #ddd;
             flex-wrap: wrap;
         }
         .volatility-btn {
-            padding: 12px 25px;
+            padding: 10px 15px;
             border: 3px solid transparent;
             border-radius: 10px;
             background: white;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
-            font-size: 1em;
+            font-size: clamp(0.8em, 3vw, 1em);
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 150px;
+            flex: 1;
+            min-width: 100px;
+            min-height: 60px;
+            justify-content: center;
         }
         .volatility-btn:hover {
             transform: translateY(-3px);
@@ -108,67 +132,77 @@
             border-color: #F57C00;
         }
         .volatility-stats {
-            font-size: 0.85em;
+            font-size: clamp(0.7em, 2.5vw, 0.85em);
             opacity: 0.9;
-            margin-top: 5px;
+            margin-top: 3px;
+            text-align: center;
         }
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            padding: 15px;
+            gap: 5px;
+            padding: 10px 5px;
             background: #f5f5f5;
             border-bottom: 2px solid #ddd;
         }
-        .stat { text-align: center; }
+        .stat { 
+            text-align: center; 
+            padding: 2px;
+        }
         .stat-value {
-            font-size: 1.3em;
+            font-size: clamp(0.9em, 3.5vw, 1.3em);
             font-weight: bold;
             color: #2196F3;
+            word-break: break-word;
         }
         .stat-label {
-            font-size: 0.85em;
+            font-size: clamp(0.7em, 2.5vw, 0.85em);
             color: #666;
+            word-break: break-word;
         }
         .game-area {
             position: relative;
-            height: 450px;
+            height: 60vh;
+            min-height: 300px;
+            max-height: 500px;
             background: linear-gradient(to bottom, #87CEEB, #E0F7FF);
             overflow: hidden;
+            touch-action: none;
         }
         #gameCanvas {
             width: 100%;
             height: 100%;
             display: block;
+            touch-action: none;
         }
         .multiplier-display {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 5px;
+            left: 5px;
             background: rgba(0, 0, 0, 0.7);
             color: #FFD700;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 1.8em;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: clamp(1.2em, 4vw, 1.8em);
             font-weight: bold;
             z-index: 50;
-            min-width: 150px;
+            min-width: 120px;
             text-align: center;
-            border: 3px solid #FF9800;
+            border: 2px solid #FF9800;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         .collector-status {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 5px;
+            right: 5px;
             background: rgba(255, 152, 0, 0.9);
             color: white;
-            padding: 12px 20px;
-            border-radius: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
             font-weight: bold;
             z-index: 50;
-            font-size: 1.1em;
-            min-width: 180px;
+            font-size: clamp(0.8em, 3vw, 1.1em);
+            min-width: 140px;
             text-align: center;
             border: 2px solid #FFD700;
         }
@@ -187,57 +221,65 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             text-align: center;
             display: none;
             z-index: 100;
-            min-width: 320px;
+            width: 90%;
+            max-width: 320px;
             border: 3px solid #2196F3;
         }
         .win-amount {
-            font-size: 2.5em;
+            font-size: clamp(1.8em, 6vw, 2.5em);
             font-weight: bold;
             color: #4CAF50;
-            margin: 20px 0;
+            margin: 15px 0;
         }
         .btn-restart {
-            padding: 12px 30px;
+            padding: 12px 25px;
             background: linear-gradient(45deg, #2196F3, #21CBF3);
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1.1em;
+            font-size: clamp(1em, 3.5vw, 1.1em);
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 20px;
+            margin-top: 15px;
+            min-height: 44px;
+            width: 100%;
+            max-width: 200px;
         }
         .btn-restart:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         .info-panel {
-            padding: 20px;
+            padding: 15px 10px;
             background: #f8f9fa;
             border-top: 1px solid #dee2e6;
         }
         .skill-selector {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
             margin-bottom: 15px;
             flex-wrap: wrap;
         }
         .skill-btn {
-            padding: 8px 15px;
+            padding: 8px 12px;
             border: 2px solid #ddd;
             border-radius: 6px;
             background: white;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
+            font-size: clamp(0.8em, 3vw, 1em);
+            min-height: 40px;
+            flex: 1;
+            min-width: 80px;
         }
         .skill-btn.active {
             background: #2196F3;
@@ -261,8 +303,9 @@
             text-align: center;
             color: #666;
             margin-top: 15px;
-            font-size: 0.9em;
-            line-height: 1.5;
+            font-size: clamp(0.75em, 2.8vw, 0.9em);
+            line-height: 1.4;
+            padding: 0 5px;
         }
         .warning {
             position: absolute;
@@ -271,12 +314,15 @@
             transform: translate(-50%, -50%);
             background: rgba(244, 67, 54, 0.9);
             color: white;
-            padding: 15px 25px;
+            padding: 15px 20px;
             border-radius: 10px;
             font-weight: bold;
             z-index: 90;
             text-align: center;
             display: none;
+            width: 90%;
+            max-width: 300px;
+            font-size: clamp(0.9em, 3.5vw, 1.1em);
         }
         .start-screen {
             position: absolute;
@@ -284,58 +330,175 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 20px;
+            padding: 25px 20px;
+            border-radius: 15px;
             text-align: center;
             z-index: 100;
-            width: 80%;
-            max-width: 500px;
-            border: 4px solid #2196F3;
+            width: 90%;
+            max-width: 450px;
+            border: 3px solid #2196F3;
         }
         .start-screen h2 {
             color: #2196F3;
-            margin-bottom: 20px;
-            font-size: 2em;
+            margin-bottom: 15px;
+            font-size: clamp(1.5em, 5vw, 2em);
         }
         .start-screen p {
-            margin: 15px 0;
+            margin: 10px 0;
             color: #666;
-            font-size: 1.1em;
+            font-size: clamp(0.9em, 3.5vw, 1.1em);
+            line-height: 1.4;
         }
         .current-mode-info {
             background: #E3F2FD;
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
-            margin: 20px 0;
+            margin: 15px 0;
             border-left: 4px solid #2196F3;
         }
         .btn-start {
-            padding: 15px 40px;
+            padding: 15px 30px;
             background: linear-gradient(45deg, #4CAF50, #8BC34A);
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 1.2em;
+            font-size: clamp(1em, 3.5vw, 1.2em);
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
             margin-top: 20px;
+            min-height: 50px;
+            width: 100%;
+            max-width: 250px;
         }
         .btn-start:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         }
-        @media (max-width: 768px) {
-            .stats-bar { grid-template-columns: repeat(3, 1fr); }
-            .multiplier-display { font-size: 1.4em; min-width: 120px; }
-            .collector-status { font-size: 0.9em; min-width: 150px; }
-            .volatility-btn { min-width: 120px; padding: 10px 15px; }
-            .header-controls { flex-direction: column; align-items: center; }
-            .control-btn { width: 200px; }
+        
+        /* Мобильная навигация */
+        .mobile-controls {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 60;
+        }
+        .mobile-jump-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255, 152, 0, 0.8);
+            border: 3px solid white;
+            color: white;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            touch-action: manipulation;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        /* Адаптация для очень маленьких экранов */
+        @media (max-width: 480px) {
+            .game-header {
+                padding: 10px 5px;
+            }
+            
+            .header-controls {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .control-btn {
+                width: 90%;
+                min-width: 200px;
+            }
+            
+            .volatility-selector {
+                gap: 5px;
+            }
+            
+            .volatility-btn {
+                min-width: 90px;
+                padding: 8px 5px;
+            }
+            
+            .stats-bar {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .stat:nth-child(4),
+            .stat:nth-child(5) {
+                grid-column: span 1;
+            }
+            
+            .multiplier-display {
+                min-width: 100px;
+                padding: 6px 10px;
+            }
+            
+            .collector-status {
+                min-width: 120px;
+                padding: 6px 10px;
+            }
+            
+            .mobile-controls {
+                display: flex;
+            }
+            
+            .skill-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .skill-btn {
+                width: 90%;
+                max-width: 200px;
+            }
+        }
+        
+        @media (max-width: 768px) and (min-width: 481px) {
+            .stats-bar {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            
+            .volatility-btn {
+                min-width: 110px;
+            }
+            
+            .mobile-controls {
+                display: flex;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .game-area {
+                height: 450px;
+            }
+            
+            .mobile-controls {
+                display: none;
+            }
+        }
+        
+        /* Предотвращение выделения текста при тапе */
+        .no-select {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
     </style>
 </head>
-<body>
+<body class="no-select">
     <div class="game-container">
         <div class="game-header">
             <h1>🎮 Flappy Crash: Режимы волатильности</h1>
@@ -397,6 +560,13 @@
             <div class="collector-status" id="collectorStatus">🧲 Подкова: Ожидание</div>
             <div class="warning" id="limitWarning">⚠️ ДОСТИГНУТ МАКСИМАЛЬНЫЙ ЛИМИТ!</div>
             
+            <!-- Мобильные кнопки управления -->
+            <div class="mobile-controls">
+                <div class="mobile-jump-btn" id="mobileJumpBtn">
+                    ↑
+                </div>
+            </div>
+            
             <!-- Стартовый экран -->
             <div id="startScreen" class="start-screen">
                 <h2>🎯 Flappy Crash</h2>
@@ -406,7 +576,7 @@
                     <p>Целевой множитель: <strong id="currentTarget">x3</strong></p>
                     <p>Вероятность выигрыша: <strong id="currentProbability">~33%</strong></p>
                 </div>
-                <p>🎮 <strong>Управление:</strong> Клик/Пробел - прыжок</p>
+                <p>🎮 <strong>Управление:</strong> Клик/Пробел/Тап - прыжок</p>
                 <p>💰 <strong>Цель:</strong> Соберите подкову и не врезайтесь в трубы!</p>
                 <p>🎯 <strong>Подкова появится через случайное время</strong></p>
                 <button class="btn-start" onclick="startGame()">🎮 НАЧАТЬ ИГРУ</button>
@@ -418,13 +588,13 @@
                 <div class="win-amount" id="winAmount">0x</div>
                 <p id="resultMessage">Соберите подкову для получения выигрыша!</p>
                 <button class="btn-restart" onclick="restartGame()">🔄 Новая игра</button>
-                <button class="btn-restart" onclick="returnToMenu()" style="background: linear-gradient(45deg, #FF9800, #FFB74D); margin-left: 10px;">🏠 В меню</button>
+                <button class="btn-restart" onclick="returnToMenu()" style="background: linear-gradient(45deg, #FF9800, #FFB74D); margin-left: 0; margin-top: 10px;">🏠 В меню</button>
             </div>
         </div>
         
         <div class="info-panel">
             <div class="skill-selector">
-                <span>Уровень навыка:</span>
+                <span style="font-size: clamp(0.9em, 3.5vw, 1em); margin-bottom: 5px; display: block;">Уровень навыка:</span>
                 <button class="skill-btn active" onclick="changeSkill(0.5)">Новичок (0.5)</button>
                 <button class="skill-btn" onclick="changeSkill(0.85)">Средний (0.85)</button>
                 <button class="skill-btn" onclick="changeSkill(1.0)">Профи (1.0)</button>
@@ -432,11 +602,11 @@
             <div class="progress-bar-container">
                 <div class="progress-bar" id="multiplierProgressBar"></div>
             </div>
-            <div style="text-align: center; margin-top: 5px; color: #666;">
+            <div style="text-align: center; margin-top: 5px; color: #666; font-size: clamp(0.8em, 3vw, 0.9em);">
                 До цели: <span id="timeToTarget">0.0</span> сек
             </div>
             <div class="instructions">
-                <p>🎯 <strong>Как играть:</strong> Управляйте птичкой (клик/пробел), избегайте труб.</p>
+                <p>🎯 <strong>Как играть:</strong> Управляйте птичкой (клик/пробел/тап), избегайте труб.</p>
                 <p>🌟 <strong>Соберите золотую подкову</strong> (80×80), чтобы активировать выигрыш!</p>
                 <p>💰 После сбора подковы, при столкновении получите накопленный множитель.</p>
                 <p>📊 <strong>Режимы:</strong> Низкая (чаще, но x3) | Средняя (x10) | Высокая (редко, но x50)</p>
@@ -504,6 +674,9 @@
         let gameRunning = false;
         let gamePaused = false;
         let animationFrameId = null;
+        let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        let touchStartY = 0;
+        let touchStartX = 0;
         
         let gameState = {
             isPlaying: false,
@@ -625,6 +798,17 @@
             gameState.pipeGap = currentConfig.pipeGap;
             gameState.pipeFrequency = currentConfig.pipeFrequency;
             
+            // Адаптируем размеры для мобильных
+            if (isMobile) {
+                gameState.bird.radius = 12;
+                gameState.pipeWidth = 60;
+                gameState.gameSpeed = 2.5;
+            } else {
+                gameState.bird.radius = 15;
+                gameState.pipeWidth = 80;
+                gameState.gameSpeed = 3;
+            }
+            
             document.getElementById('limitWarning').style.display = 'none';
             document.getElementById('multiplierProgressBar').style.background = currentConfig.progressBarColor;
         }
@@ -735,6 +919,64 @@
                 gameState.totalCoins = 0;
                 gameState.accumulatedWinnings = 0;
                 updateUI();
+            }
+        }
+
+        // ==================== МОБИЛЬНОЕ УПРАВЛЕНИЕ ====================
+        function initMobileControls() {
+            const mobileJumpBtn = document.getElementById('mobileJumpBtn');
+            if (mobileJumpBtn) {
+                // Обработка касания для прыжка
+                mobileJumpBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    jump();
+                    // Визуальный фидбек
+                    this.style.transform = 'scale(0.95)';
+                    this.style.opacity = '0.8';
+                });
+                
+                mobileJumpBtn.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    this.style.transform = 'scale(1)';
+                    this.style.opacity = '1';
+                });
+                
+                mobileJumpBtn.addEventListener('touchcancel', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.opacity = '1';
+                });
+            }
+            
+            // Обработка касания по всему canvas для прыжка
+            if (canvas) {
+                canvas.addEventListener('touchstart', function(e) {
+                    if (!gameRunning || gamePaused || gameState.gameOver) return;
+                    
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Получаем координаты касания
+                    const touch = e.touches[0];
+                    const rect = canvas.getBoundingClientRect();
+                    const touchX = touch.clientX - rect.left;
+                    const touchY = touch.clientY - rect.top;
+                    
+                    // Сохраняем начальные координаты для определения свайпа
+                    touchStartX = touchX;
+                    touchStartY = touchY;
+                    
+                    // Прыжок при любом касании
+                    jump();
+                });
+                
+                canvas.addEventListener('touchmove', function(e) {
+                    e.preventDefault();
+                }, { passive: false });
+                
+                canvas.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                });
             }
         }
 
@@ -1288,6 +1530,14 @@
         function initControls() {
             if (canvas) {
                 canvas.addEventListener('click', jump);
+                
+                // Добавляем обработчик для touchstart (мобильные устройства)
+                canvas.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    if (gameRunning && !gamePaused && !gameState.gameOver) {
+                        jump();
+                    }
+                }, { passive: false });
             }
             
             document.addEventListener('keydown', (e) => {
@@ -1307,6 +1557,9 @@
             if (startBtn) startBtn.addEventListener('click', startGame);
             if (pauseBtn) pauseBtn.addEventListener('click', pauseGame);
             if (resetBtn) resetBtn.addEventListener('click', resetStats);
+            
+            // Инициализация мобильных контролов
+            initMobileControls();
         }
 
         // ==================== ЗАПУСК ====================
@@ -1324,6 +1577,27 @@
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
             }
+        });
+
+        // Предотвращение масштабирования на мобильных устройствах
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // Предотвращение контекстного меню
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
         });
 
         // Экспортируем функции для глобального доступа
